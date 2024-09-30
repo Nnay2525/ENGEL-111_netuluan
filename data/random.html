@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มตัวเลขและจังหวัด</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #06f7e3;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        h2 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        p {
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .container {
+            margin: 20px auto;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+    </style>
+    <script>
+        const provinces = [
+            "กรุงเทพมหานคร", "กระบี่", "กำแพงเพชร", "ขอนแก่น",
+            "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท",
+            "ชัยภูมิ", "เชียงราย", "เชียงใหม่", "ตรัง",
+            "ตราด", "นครปฐม", "นครราชสีมา", "นครศรีธรรมราช",
+            "นครสวรรค์", "น่าน", "บึงกาฬ", "บุรีรัมย์",
+            "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี",
+            "พระนครศรีอยุธยา", "พะเยา", "พัทลุง", "เพชรบุรี",
+            "เพชรบูรณ์", "ระนอง", "ระยอง", "ราชบุรี",
+            "ลพบุรี", "ลำปาง", "ลำพูน", "ศรีสะเกษ",
+            "สกลนคร", "สงขลา", "สมุทรปราการ", "สมุทรสงคราม",
+            "สมุทรสาคร", "สระบุรี", "สระแก้ว", "สุโขทัย",
+            "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย",
+            "หนองบัวลำภู", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์",
+            "อุบลราชธานี"
+        ];
+
+        let numberIntervalId;
+        let provinceIntervalId;
+        let currentProvince = "";
+        let currentNumber = "";
+
+        function startRandomNumber() {
+            if (!numberIntervalId) {
+                numberIntervalId = setInterval(() => {
+                    currentNumber = Math.floor(Math.random() * 100) + 1;
+                    document.getElementById("numberResult").innerText = "ตัวเลขที่สุ่มได้: " + currentNumber;
+                }, 100); // 100 มิลลิวินาที
+            } else {
+                clearInterval(numberIntervalId);
+                numberIntervalId = null;
+                document.getElementById("numberResult").innerText = "หยุดสุ่มตัวเลข: " + currentNumber;
+            }
+        }
+
+        function startRandomProvince() {
+            if (!provinceIntervalId) {
+                provinceIntervalId = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * provinces.length);
+                    currentProvince = provinces[randomIndex];
+                    document.getElementById("provinceResult").innerText = "จังหวัดที่สุ่มได้: " + currentProvince;
+                }, 100); // 100 มิลลิวินาที
+            } else {
+                clearInterval(provinceIntervalId);
+                provinceIntervalId = null;
+                document.getElementById("provinceResult").innerText = "หยุดสุ่มจังหวัด: " + currentProvince;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>สุ่มตัวเลขและจังหวัดในประเทศไทย</h1>
+
+    <div class="container">
+        <h2>สุ่มตัวเลขระหว่าง 1-100</h2>
+        <button onclick="startRandomNumber()">เริ่ม/หยุดสุ่มตัวเลข</button>
+        <p id="numberResult"></p>
+    </div>
+
+    <div class="container">
+        <h2>สุ่มจังหวัดในประเทศไทย</h2>
+        <button onclick="startRandomProvince()">เริ่ม/หยุดสุ่มจังหวัด</button>
+        <p id="provinceResult"></p>
+    </div>
+</body>
+
+</html>

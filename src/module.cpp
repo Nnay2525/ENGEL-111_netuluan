@@ -1,7 +1,7 @@
 #include "module.h"
 
-const char* ssid = "nay";            // WiFi SSID
-const char* password = "252525";  // WiFi PSK
+const char *ssid = "netuluan25";       // WiFi SSID
+const char *password = ""; // WiFi PSK
 
 IPAddress ip;
 IPAddress gateways;
@@ -40,30 +40,38 @@ String gateway;
 String subnet;
 String dnss;
 
-AsyncWebServer server(80); //http
+AsyncWebServer server(80); // http
 
-void setup_wifi() {
-  delay(10);
-  // We start by connecting to a WiFi network
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+void setup_wifi()
+{
+    delay(10);
+    // We start by connecting to a WiFi network
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
 
-  WiFi.mode(WIFI_STA);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    WiFi.begin(ssid, password);
-    delay(500);
-    Serial.print(".");
-  }
+    WiFi.mode(WIFI_STA);
 
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        WiFi.begin(ssid, password);
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
 }
 
-void setup_wifiAP(){
+void setup_wifiAP()
+{
+    if (!WiFi.softAPConfig(ip, gateways, subnets))
+    {
+        Serial.println("AP Config Failed");
+    }
+
     WiFi.mode(WIFI_AP);
     WiFi.softAP(ssid, password);
 
@@ -72,28 +80,31 @@ void setup_wifiAP(){
     Serial.print(" ,PSK: ");
     Serial.println(password);
     Serial.print("AP IP address: ");
-    Serial.println(WiFi.softAPIP());  //Default 192.168.4.1
+    Serial.println(WiFi.softAPIP()); // Default 192.168.4.1
 }
 
-void ConfigServer(){
-  Serial.begin(115200);
-  
-  // 1st step starting SPIFFS
-  if(!SPIFFS.begin(true)){
-    Serial.println("Error Strating SPIFFS!!!");
-    return;
-  }
-  readEnvFile();
-  configureNetwork(local_IP, gateway, subnet, dnss);
-  // 2nd step Shere WiFi AP
-  setup_wifiAP();
+void ConfigServer()
+{
+    Serial.begin(115200);
 
-  // 3rd step Create DNS 
-  if(!MDNS.begin("netuluan")){
-    Serial.println("Error Starting DNS");
-    return;
-  }
-      /* ============================ อ่านไฟล์ .env ============================ */
+    // 1st step starting SPIFFS
+    if (!SPIFFS.begin(true))
+    {
+        Serial.println("Error Strating SPIFFS!!!");
+        return;
+    }
+    readEnvFile();
+    configureNetwork(local_IP, gateway, subnet, dnss);
+    // 2nd step Shere WiFi AP
+    setup_wifiAP();
+
+    // 3rd step Create DNS
+    if (!MDNS.begin("netuluan"))
+    {
+        Serial.println("Error Starting DNS");
+        return;
+    }
+    /* ============================ อ่านไฟล์ .env ============================ */
     server.on("/env", HTTP_GET, [](AsyncWebServerRequest *request)
               {
     File file = SPIFFS.open("/.env", "r");
@@ -110,37 +121,41 @@ void ConfigServer(){
     request->send(200, "text/plain", fileContent); });
     /* ==================================================================== */
 
-  // 4th step Server on script and css file
-  server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/styles.css"); });
-  server.on("/bscripts.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/bscripts.js", "application/javascript"); });
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html"); });
-  server.on("/buttons", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/buttons.html"); });
-   server.on("/shop", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/shop.html"); });
-   server.on("/Personal_history1", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/1.jpg"); });
-   server.on("/Personal_history2", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/2.jpg"); });
-             server.on("/robot", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/1235.jpg"); });
-   server.on("/networks", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/networks.html"); });
-   server.on("/scripts.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/scripts.html", "application/javascript"); });
-  
-  
+    // 4th step Server on script and css file
+    server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/styles.css"); });
+    server.on("/bscripts.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/bscripts.js", "application/javascript"); });
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html"); });
+    server.on("/buttons", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/buttons.html"); });
+    server.on("/shop", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/shop.html"); });
+    server.on("/Personal_history1", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/1.jpg"); });
+    server.on("/Personal_history2", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/2.jpg"); });
+    server.on("/robot", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/1235.jpg"); });
+    server.on("/networks", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/networks.html"); });
+    server.on("/scripts.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/scripts.js", "application/javascript"); });
+    server.on("/random", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/random.html", "text/html"); });
 
-// nattawat.local
-  MDNS.addService("http", "tcp", 80);
-  server.begin();
+    server.on("/saveConfig", HTTP_POST, handleSaveConfig);
+
+    server.on("/networksConfig", HTTP_POST, handleNetworksConfig);
+
+    // nattawat.local
+    MDNS.addService("http", "tcp", 80);
+    server.begin();
 }
 
-void handleIndex(AsyncWebServerRequest *request){
-
+void handleIndex(AsyncWebServerRequest *request)
+{
 }
 void writeEnvFile()
 {
@@ -199,7 +214,8 @@ void readEnvFile()
     Serial.print("STA Length: ");
     Serial.println(STA_SSID.length());
 
-    if(STA_SSID.length() > 1){
+    if (STA_SSID.length() > 1)
+    {
         MODES = "1";
     }
 
@@ -231,8 +247,6 @@ void readEnvFile()
     gateway = env_vars["gateway"];
     subnet = env_vars["subnet"];
     dnss = env_vars["dns"];
-
-   
 
 #ifdef DEBUG_ReadENV
     Serial.println("\n*====================================================================*\n*\n*");
@@ -385,5 +399,25 @@ void handleNetworksConfig(AsyncWebServerRequest *request)
         Serial.println("Failed to update configuration");
 #endif
         request->send(500, "text/plain", "Failed to update configuration");
+    }
+}
+void handleSaveConfig(AsyncWebServerRequest *request)
+{
+    String action;
+    if (request->hasParam("action", true))
+    {
+        action = request->getParam("action", true)->value();
+        if (action == "complete")
+        {
+            skip = true;
+            // Perform complete action
+            request->send(200, "text/plain", "Complete action performed.");
+        }
+        else if (action == "restart")
+        {
+            request->send(200, "text/plain", "Restarting ESP.");
+            delay(2000);
+            ESP.restart();
+        }
     }
 }

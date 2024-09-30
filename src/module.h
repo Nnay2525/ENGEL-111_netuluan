@@ -76,8 +76,11 @@ void setup_wifiAP();
 void ConfigServer();
 
 void handleIndex(AsyncWebServerRequest *request);
+void handleSaveConfig(AsyncWebServerRequest *request);
+void handleNetworksConfig(AsyncWebServerRequest *request);
 
 /* ------------------- End Function -------------------- */
+#define DEBUG
 
 #endif
 
